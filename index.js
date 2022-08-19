@@ -1,28 +1,12 @@
 const express = require('express');
+const bookRouter = require('./routes/bookRoutes');
+const authorRouter = require('./routes/authorRoutes');
 
 const app = express();
 
-app.get('/', (req, res) => {
-    res.status(200).json({
-        status: 'success',
-        data: 'this is a success'
-    });
-});
+app.use(express.json());
 
-const port = 3000
-app.listen(port, () => {
-    console.log(`app running on port ${port}`);
-});
+app.use('/api/v1/books', bookRouter);
+app.use('/api/v1/authors', authorRouter);
 
-const { MongoClient, ServerApiVersion } = require('mongodb');
-const uri = "mongodb+srv://ogunbanjo:<password>@cluster0.ki338ji.mongodb.net/?retryWrites=true&w=majority";
-const client = new MongoClient(uri, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-    serverApi: ServerApiVersion.v1
-});
-client.connect(err => {
-    const collection = client.db("test").collection("devices");
-    // perform actions on the collection object
-    client.close();
-});
+module.exports = app
