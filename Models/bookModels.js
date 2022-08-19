@@ -6,8 +6,6 @@ const bookSchema = new mongoose.Schema(
         title: {
             type: String,
             required: [true, 'A book must have a name'],
-            minLength: 10,
-            maxLength: 13
         },
         price: {
             type: Number,
@@ -27,7 +25,9 @@ const bookSchema = new mongoose.Schema(
         },
         ISBN: {
             type: String,
-            required: [true, 'A book must have a ISBN number']
+            required: [true, 'A book must have a ISBN number'],
+            minLength: 10,
+            maxLength: 13
         },
         // author: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Author' }],
     }
