@@ -2,7 +2,11 @@ const Author = require('../Models/authorModels');
 
 exports.getAllAuthors = async (req, res, next) => {
     try {
-        const authors = await Author.find();
+        const queryObj = { ...req.query }
+        const excludedObj = ['sort', 'limit', 'fields', 'page'];
+        excludedObj.forEach(el => delete queryObj[el])
+
+        const authors = await Author.find(queryObj);
 
         res.status(200).json({
             status: 'success',
