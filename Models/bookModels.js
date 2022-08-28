@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-// const Author = require('./authorModels');
+const Author = require('./authorModels');
 
 const bookSchema = new mongoose.Schema(
     {
@@ -29,9 +29,23 @@ const bookSchema = new mongoose.Schema(
             minLength: 10,
             maxLength: 13
         },
-        // author: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Author' }],
+        author: [
+            {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'Author',
+                required: [true, 'A book must have an author']
+            }
+        ]
     }
 );
+
+bookSchema.pre(/^find/, function (next) {
+    this.populate({
+        path: 'author',
+        select: 'firstName'
+    })
+    next();
+});
 
 const Book = mongoose.model('Book', bookSchema);
 
