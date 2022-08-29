@@ -29,11 +29,25 @@ const bookSchema = new mongoose.Schema(
             minLength: 10,
             maxLength: 13
         },
+        avrageRating: {
+            type: Number
+        },
+        level: {
+            type: String,
+            enum: ['easy', 'intermediate', 'difficult']
+        },
         author: [
             {
                 type: mongoose.Schema.Types.ObjectId,
                 ref: 'Author',
                 required: [true, 'A book must have an author']
+            }
+        ],
+        reviews: [
+            {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'Review',
+
             }
         ]
     }
@@ -46,6 +60,14 @@ bookSchema.pre(/^find/, function (next) {
     })
     next();
 });
+
+bookSchema.pre(/^find/, function (next) {
+    this.populate({
+        path: 'reviews',
+        select: '-__V'
+    });
+    next();
+})
 
 const Book = mongoose.model('Book', bookSchema);
 
