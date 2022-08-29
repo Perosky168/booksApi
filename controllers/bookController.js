@@ -51,6 +51,17 @@ exports.getAllBooks = async (req, res, next) => {
     };
 };
 
+exports.getBook = async (req, res, next) => {
+    const tour = await Book.findById(req.params.id)
+
+    res.status(200).json({
+        status: 'success',
+        data: {
+            tour
+        }
+    })
+};
+
 exports.createBook = async (req, res, next) => {
     try {
         const book = await Book.create(req.body);

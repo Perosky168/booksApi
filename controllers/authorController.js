@@ -2,11 +2,15 @@ const Author = require('../Models/authorModels');
 
 exports.getAllAuthors = async (req, res, next) => {
     try {
+        // 1) Filtering
         const queryObj = { ...req.query }
         const excludedObj = ['sort', 'limit', 'fields', 'page'];
         excludedObj.forEach(el => delete queryObj[el])
 
-        const authors = await Author.find(queryObj);
+        let queryStr = JSON.stringify(queryObj);
+        queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, match => `$${match}`);
+
+        const authors = await Author.find(JSON.parse(queryStr));
 
         res.status(200).json({
             status: 'success',
