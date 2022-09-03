@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const Author = require('./authorModels');
 
 const bookSchema = new mongoose.Schema(
     {
@@ -13,7 +12,7 @@ const bookSchema = new mongoose.Schema(
         },
         genre: {
             type: String,
-            enum: ['fantasy', 'movie', 'educatio'],
+            enum: ['fantasy', 'love', 'crime', 'action'],
             required: [true, 'A book must have a genre']
         },
         type: {
@@ -27,7 +26,8 @@ const bookSchema = new mongoose.Schema(
             type: String,
             required: [true, 'A book must have a ISBN number'],
             minLength: 10,
-            maxLength: 13
+            maxLength: 13,
+            unique: true
         },
         avrageRating: {
             type: Number
@@ -36,38 +36,20 @@ const bookSchema = new mongoose.Schema(
             type: String,
             enum: ['easy', 'intermediate', 'difficult']
         },
-        author: [
-            {
-                type: mongoose.Schema.Types.ObjectId,
-                ref: 'Author',
-                required: [true, 'A book must have an author']
-            }
-        ],
-        reviews: [
-            {
-                type: mongoose.Schema.Types.ObjectId,
-                ref: 'Review',
-
-            }
-        ]
+        author: String,
+    },
+    {
+        toJSON: { virtuals: true },
+        toObject: { virtuals: true }
     }
 );
 
-bookSchema.pre(/^find/, function (next) {
-    this.populate({
-        path: 'author',
-        select: 'firstName'
-    })
-    next();
+// Virtual populate
+bookSchema.virtual('reviews', {
+    ref: 'Review',
+    foreignField: 'book',
+    localField: '_id'
 });
-
-bookSchema.pre(/^find/, function (next) {
-    this.populate({
-        path: 'reviews',
-        select: '-__V'
-    });
-    next();
-})
 
 const Book = mongoose.model('Book', bookSchema);
 
